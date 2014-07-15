@@ -1,22 +1,58 @@
-Point = function(x,y,leftNeighbor,rightNeighbor)
-{
-	this.color = "#FF0000";
-	this.calculateToCommonCoordinates(x,y);
-	this.calculateToCanvasCoordinates();
+Point = Backbone.RelationalModel.extend({
+	urlRoot : "/point/",
+	
+	relations : [
+		{
+			type : Backbone.HasOne,
+			key : 'leftNeighbor',
+			relatedModel : 'Point',
+			reverseRelation : {
+				type : Backbone.HasOne,
+				key : 'isLeftNeighborOf',
+				includeInJSON : 'id'
+			}
+		},
+		{
+			type : Backbone.HasOne,
+			key : 'rightNeighbor',
+			relatedModel : 'Point',
+			reverseRelation : {
+				type : Backbone.HasOne,
+				key : 'isRightneighborOf',
+				includeInJSON : 'id'
+			}
+		}
+	],
 
-	this.leftNeighbor = leftNeighbor;
-	this.rightNeighbor = rightNeighbor;
+	initializeWithEvent : function(event)
+	{
+		this.set ({color : "#FF0000"});
+		// console.log(args);
+		// debugger;
+		this.calculateToCommonCoordinates(event["offsetX"],event["offsetY"]);
+		this.calculateToCanvasCoordinates();
 
-}
+		//settés avec le "new"
+		// this.leftNeighbor = leftNeighbor;
+		// this.rightNeighbor = rightNeighbor;		
+	}
+});
+
+
+// Point = function(x,y,leftNeighbor,rightNeighbor)
+// {
+
+
+// }
 
 Point.prototype.calculateToCommonCoordinates = function(x,y) {
-	this.x = x * 1000 / canvasWidth;
-	this.y = y * 1000 /  canvasHeight;
+	this.set('x' , x * 1000 / canvasWidth);
+	this.set('y',  y * 1000 /  canvasHeight);
 };
 
 Point.prototype.calculateToCanvasCoordinates = function() {
-	this.cX = this.x * canvasWidth / 1000;
-	this.cY = this.y * canvasHeight / 1000;	
+	this.cX = this.get('x') * canvasWidth / 1000;
+	this.cY = this.get('y') * canvasHeight / 1000;	
 };
 
 Point.prototype.draw = function() {
@@ -62,3 +98,7 @@ Point.prototype.drawPathToNeihbor = function() {
 	context.lineTo(this.leftNeighbor.cX,this.leftNeighbor.cY);
 	context.stroke();
 };
+
+PointCollection = Backbone.Collection.extend({
+	model : Point
+});

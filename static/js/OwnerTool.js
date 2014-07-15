@@ -20,8 +20,8 @@ function addOwnerToolAttributes (object) {
 
 function addOwnerToolMethods (object) {
 	object.addOwner = function  (name) {
-		var owner = new Owner(name);
-		owner.save();
+		var owner = new Owner({name:name,polygons:[]});
+		// owner.save(); this is handled by backbone relational now
 		map.owners.push(owner);
 	}
 

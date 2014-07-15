@@ -1,20 +1,66 @@
-Polygon = function (event) {
-	this.center = {"x":0,"y":0};
-	this.coordinates = [];
+Polygon = Backbone.RelationalModel.extend({
+	urlRoot : '',
+	relations : 
+	[
+		{
+			type : Backbone.HasMany,
+			key : 'coordinates',
+			relatedModel : "Point",
+			collectionType : 'PointCollection',
+			reverseRelation : {
+				key : 'isInPolygon',
+				includeInJSON : 'id'
+			}
+		},
+		{
+			type : Backbone.HasMany,
+			key : "adjacents",
+			relatedModel : 'Polygon',
+			collectionType : 'PolygonCollection',
+			reverseRelation : {
+				key : 'isAdjacentTo',
+				includeInJSON : 'id'
+			}
+		}
+	]
+});
+
+PolygonCollection = Backbone.Collection.extend({
+	model : Polygon
+})
+
+Polygon.prototype.initialize = function(event) {
+
+	this.set(
+		{
+			center : new Point({"x":0,"y":0,"event" : event})
+		},
+		{
+			'remove' : false
+		}
+	);
+
+	// this.center = ;
+	// this.coordinates = [];
 	this.addPoint(event).setStartPoint();
 	this.closed = false;
-	this.name = "";
+	// this.name = "";
 
-	this.adjacents = [];
+	// this.adjacents = [];
 
-	this.sector = null;
-}
+	this.sector = null;	
+};
+
 
 Polygon.prototype.addPoint = function(event,leftNeighbor) {
 	//on ramene les coordonnées à ce qu'elles seraient dans un canvas de 1000 x 1000
-	var newPoint = new Point(event.offsetX,event.offsetY,leftNeighbor);
+	var newPoint = new Point({'leftNeighbor':leftNeighbor});
 
-	this.coordinates.push(newPoint);
+	newPoint.initializeWithEvent(event);
+
+	// console.log(this.getRelation('coordinates'));
+
+	this.getRelation('coordinates').relatedCollection.push(newPoint);
 
 	this.setCenter();
 
@@ -25,16 +71,16 @@ Polygon.prototype.setCenter = function() {
 	var x = 0;
 	var y = 0;
 
-	for (var point = 0; point < this.coordinates.length; point++) {
+	for (var point = 0; point < this.get('coordinates').length; point++) {
 		x += this.coordinates[point].cX;
 		y += this.coordinates[point].cY;
 	};
 
-	x /= this.coordinates.length;
-	y /= this.coordinates.length;
+	x /= this.get('coordinates').length;
+	y /= this.get('coordinates').length;
 
-	this.center.x = x;
-	this.center.y = y;
+	this.get('center').set( {'x': x});
+	this.get('center').set({'y':y});
 };
 
 Polygon.prototype.draw = function() {
@@ -44,30 +90,30 @@ Polygon.prototype.draw = function() {
 	context.textAlign = "center";
 
 
-	for (var point = 0; point < this.coordinates.length; point++) {
-		this.coordinates[point].draw();
+	for (var point = 0; point < this.get('coordinates').length; point++) {
+		this.get('coordinates').at(point).draw();
 	};
 
 	context.fillStyle = "#000000";
-	context.fillText(this.name,this.center.x,this.center.y);
+	context.fillText(this.name,this.get('center').get('x'),this.get('center').get('y'));
 };
 
 Polygon.prototype.clickedPoint = function(event) {
-	for (var point = 0; point < this.coordinates.length; point++) {
-		if(this.coordinates[point].isClicked(event.offsetX,event.offsetY)) return this.coordinates[point];
+	for (var point = 0; point < this.get('coordinates').length; point++) {
+		if(this.get('coordinates').at(point).isClicked(event.offsetX,event.offsetY)) return this.get('coordinates').at(point);
 	};
 	return false;
 };
 
 Polygon.prototype.close = function() {
-	this.coordinates.pop();
-	this.coordinates[0].leftNeighbor = this.coordinates[this.coordinates.length-1];
+	this.get('coordinates').pop();
+	this.get('coordinates').at(0).leftNeighbor = this.get('coordinates').at(this.get('coordinates').length-1);
 	this.closed = true;
 };
 
 Polygon.prototype.removePoint = function(point) {
-	var index = this.coordinates.indexOf(point);
-	this.coordinates.splice(index,1);
+	var index = this.get('coordinates').indexOf(point);
+	this.get('coordinates').splice(index,1);
 
 	if(this.coordinates.length < 1) {
 		map.removePolygon(this);
@@ -95,7 +141,7 @@ Polygon.prototype.insertPoint = function(startPoint) {
 
 Polygon.prototype.changeName = function(newName) {
 	// console.log(this.name);
-	this.name = newName;
+	this.Set({'name' : newName});
 };
 
 Polygon.prototype.updateAdjacencies = function() {

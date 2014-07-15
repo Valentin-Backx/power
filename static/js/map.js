@@ -18,7 +18,11 @@ Map.prototype.draw = function() {
 
 Map.prototype.clickedPolygon = function(event) {
 	for (var poly = 0; poly < this.polygons.length; poly++) {
-		if(point = this.polygons[poly].clickedPoint(event)) return {"poly":this.polygons[poly],"point":point};
+		if(point = this.polygons[poly].clickedPoint(event))
+		{
+			console.log(point);
+			 return {"poly":this.polygons[poly],"point":point};	
+		}
 	};
 	return false;
 };
@@ -34,13 +38,19 @@ Map.prototype.getAdjacents = function(target)
 }
 
 Map.prototype.removePolygon = function(poly) {
+
 	this.polygons.splice(this.polygons.indexOf(poly),1);
+
+
+
 	delete poly;
 };
 
 Map.prototype.addSector = function(name,owner) {
 
-	var sector = new Sector(name);
+	var sector = new Sector({name: name});
+
+	sector.set('isOwnedBy' , owner);
 
 	sector.owner = function  (owner) {
 		for (var i = map.owners.length - 1; i >= 0; i--) {
@@ -49,5 +59,6 @@ Map.prototype.addSector = function(name,owner) {
 	}
 
 	this.sectors.push(sector);
-	sector.save();
+
+	// sector.save(); this is handled by backbone relational now
 };
