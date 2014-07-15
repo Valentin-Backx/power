@@ -1,0 +1,14 @@
+{% extends 'common.html' %}
+
+{% block content %}
+	
+	<ul>
+	{% for game in candidates %}
+
+
+		<li><a href="{% url 'games:enter' game.id %}">{{ game.name }}</a></li>
+
+
+	{% endfor %}
+	</ul>
+{% endblock %}

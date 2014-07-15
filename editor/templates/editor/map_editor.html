@@ -1,0 +1,139 @@
+{% extends 'common.html' %}
+
+{% load staticfiles %}
+
+{% block head %}
+	<link rel="stylesheet" type="text/css" href="{% static 'css/editor/map_editor.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/jquery_ui/jquery-ui.css' %}">
+	<script src="{% static 'js/jquery/jquery-1.9.1.js' %}"></script>
+	<script src="{% static 'js/jquery/jquery-ui.js' %}"></script>
+	<script src="{% static 'js/uiPrepare.js' %}"></script>
+	<script src="{% static 'js/Point.js' %}"></script>
+	<script src="{% static 'js/tool.js' %}"></script>
+	<script src="{% static 'js/polygon.js' %}"></script>
+	<script src="{% static 'js/map.js' %}"></script>
+	<script src="{% static 'js/sectorTool.js' %}"></script>
+	<script src="{% static 'js/polygonTool.js' %}"></script>
+	<script src="{% static 'js/OwnerTool.js' %}"></script>
+	<script src="{% static 'js/toolBelt.js' %}"></script>
+	<script src="{% static 'js/cursorWatch.js' %}"></script>
+	<script src="{% static 'js/map_editor.js' %}"></script>
+
+	<script>
+
+		var backgroundImage = new Image();
+		backgroundImage.src = "http://"+window.location.host+"{{ map.background.background.url }}";
+
+		var polygonToolIcon = new Image();
+		polygonToolIcon.src = "{% static 'images/editor/polygon_icon.gif' %}";
+		var sectorToolIcon = new Image();
+		sectorToolIcon.src = "{% static 'images/editor/sector_icon.gif' %}";
+		var ownerToolIcon = new Image();
+		ownerToolIcon.src = "{% static 'images/editor/owner_icon.gif' %}";
+
+
+		function getMaps () {
+			$.get( "{% url 'editor:getBackgrounds' %}", function(data) {
+		  
+
+				appendThumbnails(data);
+
+				$("#maps").ready(function(){
+					backgroundBind();
+				});
+			});
+		}
+
+		function appendThumbnails (data) {
+			for (var bg in data) {
+				$("#maps ul").append(
+							"<li>"+
+						    "<input type='radio' name='name' value="+bg+" />"+
+						    "<label for="+bg+">"+bg+"</label><br />"+
+							"<img class='map-bg' src='http://"+window.location.host+data[bg]+"' alt=''></li>"
+					)
+
+			};
+		}
+
+		uiPrepare();
+
+	</script>
+
+{% endblock %}
+
+{% block left %}
+	
+	<h1>editing: {{ map.name }}</h1>
+
+
+
+		<button id="opener">
+			edit map parameters
+		</button>
+		<div id="dialog">
+			<p>map parameters</p>
+
+			<form enctype="multipart/form-data" id="backgroud-upload" method="post" action="{% url 'editor:uploadBackground' map.id %}">
+				{{ backgroundForm }}
+				<button type="submit">envoyer</button>
+				{% csrf_token %}
+			</form>
+			<div id="map-select-title">Choose a map background</div>
+			<form method="post" action="{% url 'editor:chooseBackground' map.id %}">
+				<div id="maps">
+					<ul>
+
+					</ul>
+				</div>
+				{% csrf_token %}
+				<input type="submit" value="Save choice" />
+			</form>
+			
+		</div>
+
+		<div id="poly-name-prompt">
+			<form id="poly-name-form">
+				<input id="poly-name" name="name" type="text" placeholder="enter poly name here" />
+
+				<input type="submit" value="Save name">
+
+			</form>
+		</div>
+
+		<div id="sector-management-prompt">
+			<form id="sector-management-form">
+				<button id="sector-add">Ajouter un secteur</button>
+				<input type="submit" value="Save modifications">
+			</form>
+		</div>
+
+		<div id="sector-add-prompt">
+			<form id="sector-add-form">
+				<input id="new-sector-name" name="new-sector-name" type="text" placeholder="enter sector name here">
+			    <ul id="map-owners">
+
+ 			    </ul>
+				<input type="submit" value="Save sector">
+			</form>
+		</div>
+
+		<div id="owner-add-prompt">
+			<form id="owner-add-form">
+				<input id="new-owner-name" name="new-owner-name" type="text" placeholder="enter new player spot name here">
+				<input type="submit" value="Save player spot">
+			</form>
+		</div>
+
+{% endblock %}
+
+{% block content %}
+
+	<div id="map-data" data-map="{{ map.id }}"></div>
+
+	<div id = "canvas-wrapper">
+		<canvas id="canvas">
+		</canvas>
+	</div>
+
+{% endblock %}

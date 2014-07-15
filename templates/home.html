@@ -1,0 +1,24 @@
+{% extends 'common.html' %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+	<h1>welcome {{ name }}</h1>
+
+	<ul>
+	    <li>
+			<a href="{% url 'games:index' %}">clic here to see your current games</a>
+		</li>
+	    <li>
+	  		<a href="{% url 'games:seek' %}">cliquez ici pour rechercher une partie</a>
+	    </li>
+	    <li>
+	    	<a href="{% url 'editor:index' %}">cliquer ici pour accéder à l'édition de maps</a>
+	    </li>
+	</ul>
+
+	
+
+
+{% endblock %}

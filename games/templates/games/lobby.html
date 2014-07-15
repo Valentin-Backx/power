@@ -1,0 +1,35 @@
+{% extends 'common.html' %}
+
+{% load staticfiles %}
+
+{% block content %}
+	<script type="text/javascript" src="{% static 'games/lobby.js' %}"></script>
+
+	<h1>lobby to {{ game.name }}</h1>
+
+	{{ message }}
+
+	{% if message %}<p><strong>{{ message }}</strong></p>{% endif %}
+
+	<ul>
+		{% for player in player_list %}
+	    	<li>player.name <p style="color:{{ player.color }};">color</p></li>
+	    {% endfor %}
+	</ul>
+
+
+	<form method="post" action="{% url 'games:ready' game.id %}">
+		<button id="submit-button" type="submit" name="ready" value="ready">Ready !</button>
+		{% csrf_token %}
+	</form>
+
+
+	<form method="post" action="{% url 'games:leave' game.id %}">
+		<button id="leave-button" type="submit" name="leave" value="leave">Leave game</button>
+		{% csrf_token %}
+	</form>
+
+	<div id="dataset" data-ready="{{ ready }}"></div>
+
+
+{% endblock %}

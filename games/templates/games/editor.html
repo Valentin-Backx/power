@@ -1,0 +1,25 @@
+{% extends 'common.html' %}
+
+{% load staticfiles %}
+
+{% block content %}
+	
+
+	{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+
+	<ul>
+	{% for map in maps %}
+		<li><a href="{% url 'editor:edit' map.id %}">edit {{ map.name }}</a></li>
+	{% endfor %}
+
+	</ul>
+
+	<form action="{% url 'editor:newMap' %}" method="post">
+
+		<input name="name" type=text  pattern="^[a-zA-Z0-9_]*$" required>
+		<button id="submit-button" type="submit" name="create" value="create">Create new map</button>
+		{% csrf_token %}
+	</form>
+
+{% endblock %}

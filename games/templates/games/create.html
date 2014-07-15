@@ -1,0 +1,24 @@
+{% extends 'common.html' %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+	<h1>create new game</h1>
+
+	{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+	<form action="{% url 'games:create' %}" method="post">
+
+	{% for map in list_maps %}
+	    <input type="radio" name="map" id="map{{ forloop.counter }}" value="{{ map.id }}" />
+	    <label for="map{{ forloop.counter }}">{{ map.name }}</label><br />
+	{% endfor %}
+
+	<input name="name" type=text  pattern="^[a-zA-Z0-9_]*$" required>
+	<input type="submit" value="Create" />
+	{% csrf_token %}
+
+	</form>
+
+{% endblock %}

@@ -1,0 +1,43 @@
+{% load static %}
+
+	<head>
+
+		<link rel="stylesheet" type="text/css" href="{% static 'css/common/common.css' %}">
+		{% block head %}
+		{% endblock %}
+	</head>
+
+<body>
+
+	<div id="left-col">
+		{% block left %}
+		
+
+			{% if user.is_authenticated %}
+				<!-- <a href="{#{% url 'auth:auth_logout' %}#}">logout</a> -->
+				<a href="{% url 'auth_logout' %}">logout</a>
+			{% else %}
+				
+				<!-- <a href="{#{% url 'auth:auth_login' %}#}">login</a> -->
+				<a href="{% url 'auth_login' %}">login</a>
+				pas encore inscirit?
+				<a href="{% url 'registration_register' %}">inscrivez vous !</a>
+				<!-- <a href="{#{% url 'auth:registration_register' %}#}">inscrivez vous !</a> -->
+			{% endif %}
+
+			<a href="{% url 'home' %}">home</a>
+
+		{% endblock %}
+
+	</div>
+
+	<div id="content">
+
+		{% block content %}
+
+		{% endblock %}
+	</div>
+
+</body>
+
+

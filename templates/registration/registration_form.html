@@ -1,0 +1,7 @@
+<!-- <form method="post" action="{#{% url 'auth:registration_register' %}#}"> -->
+<form method="post" action="{% url 'registration_register' %}">
+	{{ form }}
+	<INPUT TYPE="submit" NAME="submiy" VALUE="submit">
+		
+	{% csrf_token %}
+</form>

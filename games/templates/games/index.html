@@ -1,0 +1,20 @@
+{% extends 'common.html' %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+	{% if latest_games %}
+	    <ul>
+	    {% for game in latest_games %}
+	        <li><a href="{% url 'games:enter' game.id %}">{{ game.name }}</a></li>
+	    {% endfor %}
+	    </ul>
+	{% else %}
+	    <p>No games are currently ongoing.</p>
+	{% endif %}
+
+
+	<a href="{% url 'games:create' %}">create new game</a>
+
+{% endblock %}

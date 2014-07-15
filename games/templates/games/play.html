@@ -1,0 +1,16 @@
+{% extends 'common.html' %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+	<h1>game {{ game.name }}  (ingame)</h1>
+
+
+	<div id="dataset"
+		data-players = {{ players }}
+		data-map = {{ map }}
+
+	></div>
+
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends 'common.html' %}
+
+{% load staticfiles %}
+
+{% block head %}
+	<link rel="stylesheet" type="text/css" href="{% static 'css/jquery_ui/jquery-ui.css' %}">
+	<script src="{% static 'js/jquery/jquery-1.9.1.js' %}"></script>
+	<script src="{% static 'js/jquery/jquery-ui.js' %}"></script>
+	<script src="{% static 'js/map_settings.js' %}"></script>
+
+	<script>
+			 $(function() {
+			    $( "#dialog" ).dialog({
+			      autoOpen: false,
+			      show: {
+			        effect: "blind",
+			        duration: 1000
+			      },
+			      hide: {
+			        effect: "explode",
+			        duration: 1000
+			      }
+			    });
+			 
+			    $( "#opener" ).click(function() {
+			      $( "#dialog" ).dialog( "open" );
+			      getMaps();
+			    });
+
+			 });
+/*
+			 $("#backgroud-upload").submit(function(){
+			 	$.post(
+			 			url : "{% url 'editor:uploadBackground' %}",
+			 			data : { name : $(this).name.value,
+			 					 backgroud : $(this.background.value)
+			 					}
+			 		)
+			 	return false;
+			 });*/
+
+	</script>
+
+{% endblock %}
+
+{% block content %}
+
+	<h1>editing: {{ map.name }}</h1>
+
+
+	<div id="left-col">
+
+	</div>
+
+	<div id = "canvas-wrapper">
+		<canvas id="canvas">
+		</canvas>
+	</div>
+	<button id="opener">
+		edit map parameters
+	</button>
+	<div id="dialog">
+		<p>map parameters</p>
+
+		<form enctype="multipart/form-data" id="backgroud-upload" method="post">
+			{{ backgroundForm }}
+			<button type="submit">envoyer</button>
+			{% csrf_token %}
+		</form>
+
+		<div id="maps">
+			<ul>
+
+			</ul>
+		</div>
+		
+	</div>
+
+
+{% endblock %}
